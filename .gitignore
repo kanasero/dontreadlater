@@ -43,3 +43,6 @@ Thumbs.db
 
 # Other files
 *.zip
+
+.env.*
+!.env.example
