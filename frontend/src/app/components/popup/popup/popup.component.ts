@@ -10,6 +10,7 @@ import {ChromeService, PageInfo} from '../../../shared/services/chrome.service';
 })
 export class PopupComponent implements OnInit {
   pageInfo: PageInfo | undefined | null
+  readingList: PageInfo[] | undefined
 
   private chromeService = inject(ChromeService)
 
@@ -18,6 +19,9 @@ export class PopupComponent implements OnInit {
       this.pageInfo = pageInfo
     })
 
+    this.chromeService.getReadingListAsync().then(readingList => {
+      this.readingList = readingList
+    })
   }
 
   addToReadingList(pageInfo: PageInfo) {
