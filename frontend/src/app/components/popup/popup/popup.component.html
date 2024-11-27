@@ -1,4 +1,8 @@
 @if (pageInfo !== undefined) {
-  <p>{{ pageInfo.url }}</p>
-  <p>{{ pageInfo.title }}</p>
+  @if (pageInfo !== null) {
+    <p>{{ pageInfo.url }}</p>
+    <p>{{ pageInfo.title }}</p>
+  } @else {
+     <p>No access to the page</p>
+  }
 }

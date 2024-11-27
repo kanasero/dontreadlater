@@ -13,14 +13,13 @@ export class ChromeService {
 
   constructor() { }
 
-  getPageInfoAsync(): Promise<PageInfo> {
+  getPageInfoAsync(): Promise<PageInfo | null> {
     return new Promise(resolve => {
       this.getActiveTabAsync().then(tab => {
         this.getTabTitle(tab).then(title => {
-          resolve({
-            url: tab.url ?? '',
-            title: title ?? '',
-          })
+          const url = tab.url ?? null
+          resolve(title === null || url === null ? null : {url, title})
+          resolve({url: '', title: ''})
         })
       })
     })
@@ -33,24 +32,25 @@ export class ChromeService {
     }).then((tabs: chrome.tabs.Tab[]) => tabs[0])
   }
 
-  private getTabTitle(tab: Tab): Promise<string | undefined> {
+  private getTabTitle(tab: Tab): Promise<string | null> {
     return new Promise(resolve => {
       if (tab.id) {
         chrome.scripting.executeScript({
           target: {tabId: tab.id},
-          func: () => {
+          func: (tabTitle) => {
             let title = document.querySelector('h1')?.innerText.trim()
-            if (!title) {
-              title = document.getElementsByTagName('title')?.item(0)?.innerText
-            }
-            return new Promise(resolve => resolve(title ?? tab.title))
+            return new Promise(resolve => resolve(title ? title : tabTitle))
           },
+          args: [tab.title]
         })
           .then(([injectionResult]) => {
             resolve(injectionResult.result as string)
           })
+          .catch(error => {
+            resolve(null)
+          })
       } else {
-        resolve('')
+        resolve(null)
       }
     })
   }

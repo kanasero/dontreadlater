@@ -9,7 +9,7 @@ import {ChromeService, PageInfo} from '../../../shared/services/chrome.service';
   styleUrl: './popup.component.scss'
 })
 export class PopupComponent implements OnInit {
-  pageInfo: PageInfo | undefined
+  pageInfo: PageInfo | undefined | null
 
   private chromeService = inject(ChromeService)
 
