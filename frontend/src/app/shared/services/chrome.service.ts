@@ -66,4 +66,8 @@ export class ChromeService {
       }
     })
   }
+
+  isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
+    return readingList.some(pageInfoInList => pageInfoToCheck.url === pageInfoInList.url)
+  }
 }

@@ -1,7 +1,11 @@
 @if (pageInfo !== undefined) {
   @if (pageInfo !== null) {
     <p>{{ pageInfo.title }}</p>
-    <button (click)="addToReadingList(pageInfo)">Add to read list</button>
+    @if (isPageInReadingList) {
+      <button (click)="removeFromReadingList(pageInfo)">Remove from read list</button>
+    } @else {
+      <button (click)="addToReadingList(pageInfo)">Add to read list</button>
+    }
   } @else {
      <p>No access to the page</p>
   }

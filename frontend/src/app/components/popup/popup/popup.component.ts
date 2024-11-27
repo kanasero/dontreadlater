@@ -11,20 +11,27 @@ import {ChromeService, PageInfo} from '../../../shared/services/chrome.service';
 export class PopupComponent implements OnInit {
   pageInfo: PageInfo | undefined | null
   readingList: PageInfo[] | undefined
+  isPageInReadingList = false
 
   private chromeService = inject(ChromeService)
 
   ngOnInit() {
-    this.chromeService.getPageInfoAsync().then(pageInfo => {
-      this.pageInfo = pageInfo
-    })
-
-    this.chromeService.getReadingListAsync().then(readingList => {
+    Promise.all([
+      this.chromeService.getPageInfoAsync(),
+      this.chromeService.getReadingListAsync(),
+    ]).then(([pageInfo, readingList]) => {
       this.readingList = readingList
+      this.isPageInReadingList = pageInfo === null ?
+        false : this.chromeService.isPageInReadingList(pageInfo, this.readingList)
+      this.pageInfo = pageInfo
     })
   }
 
   addToReadingList(pageInfo: PageInfo) {
     this.chromeService.addToReadingListAsync(pageInfo)
+  }
+
+  removeFromReadingList(pageInfo: PageInfo) {
+
   }
 }
