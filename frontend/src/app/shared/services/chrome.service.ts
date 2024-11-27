@@ -23,7 +23,6 @@ export class ChromeService {
         this.getTabTitle(tab).then(title => {
           const url = tab.url ?? null
           resolve(title === null || url === null ? null : {url, title})
-          resolve({url: '', title: ''})
         })
       })
     })
