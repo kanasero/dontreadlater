@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import Tab = chrome.tabs.Tab;
 
 export interface PageInfo {
@@ -10,8 +11,11 @@ export interface PageInfo {
   providedIn: 'root'
 })
 export class ChromeService {
+  readingList$ = new BehaviorSubject<PageInfo[]>([])
 
-  constructor() { }
+  constructor() {
+    this.getReadingListAsync().then(readingList => this.readingList$.next)
+  }
 
   getPageInfoAsync(): Promise<PageInfo | null> {
     return new Promise(resolve => {
@@ -28,6 +32,7 @@ export class ChromeService {
   addToReadingListAsync(pageInfo: PageInfo): Promise<void> {
     return this.getReadingListAsync().then(readingList => {
       readingList.push(pageInfo)
+      this.readingList$.next(readingList)
       return chrome.storage.local.set({readingList: readingList})
     })
   }
@@ -35,6 +40,18 @@ export class ChromeService {
   getReadingListAsync(): Promise<PageInfo[]> {
     return chrome.storage.local.get('readingList')
       .then(({readingList}) => readingList ?? [])
+  }
+
+  isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
+    return readingList.some(pageInfoInList => pageInfoToCheck.url === pageInfoInList.url)
+  }
+
+  removeFromReadingListAsync(pageInfo: PageInfo) {
+    return this.getReadingListAsync().then(readingList => {
+      readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
+      this.readingList$.next(readingList)
+      return chrome.storage.local.set({readingList: readingList})
+    })
   }
 
   private getActiveTabAsync(): Promise<Tab> {
@@ -64,17 +81,6 @@ export class ChromeService {
       } else {
         resolve(null)
       }
-    })
-  }
-
-  isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
-    return readingList.some(pageInfoInList => pageInfoToCheck.url === pageInfoInList.url)
-  }
-
-  removeFromReadingListAsync(pageInfo: PageInfo) {
-    return this.getReadingListAsync().then(readingList => {
-      readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
-      return chrome.storage.local.set({readingList: readingList})
     })
   }
 }
