@@ -17,5 +17,10 @@ export class PopupComponent implements OnInit {
     this.chromeService.getPageInfoAsync().then(pageInfo => {
       this.pageInfo = pageInfo
     })
+
+  }
+
+  addToReadingList(pageInfo: PageInfo) {
+    this.chromeService.addToReadingListAsync(pageInfo)
   }
 }

@@ -25,6 +25,18 @@ export class ChromeService {
     })
   }
 
+  addToReadingListAsync(pageInfo: PageInfo): Promise<void> {
+    return this.getReadingListAsync().then(readingList => {
+      readingList.push(pageInfo)
+      return chrome.storage.local.set({readingList: readingList})
+    })
+  }
+
+  getReadingListAsync(): Promise<PageInfo[]> {
+    return chrome.storage.local.get('readingList')
+      .then(({readingList}) => readingList ?? [])
+  }
+
   private getActiveTabAsync(): Promise<Tab> {
     return chrome.tabs.query({
       active: true,
@@ -54,5 +66,4 @@ export class ChromeService {
       }
     })
   }
-
 }
