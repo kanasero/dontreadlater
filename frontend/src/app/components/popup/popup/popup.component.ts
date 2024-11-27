@@ -32,6 +32,6 @@ export class PopupComponent implements OnInit {
   }
 
   removeFromReadingList(pageInfo: PageInfo) {
-
+    this.chromeService.removeFromReadingListAsync(pageInfo)
   }
 }

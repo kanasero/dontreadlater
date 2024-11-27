@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Tab = chrome.tabs.Tab;
 
 export interface PageInfo {
@@ -69,5 +69,12 @@ export class ChromeService {
 
   isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
     return readingList.some(pageInfoInList => pageInfoToCheck.url === pageInfoInList.url)
+  }
+
+  removeFromReadingListAsync(pageInfo: PageInfo) {
+    return this.getReadingListAsync().then(readingList => {
+      readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
+      return chrome.storage.local.set({readingList: readingList})
+    })
   }
 }
