@@ -11,7 +11,10 @@
   }
   <ul class="reading-list">
     @for (readItem of readingList; track readItem.url) {
-      <li><a href="{{ readItem.url }}" target="_blank">{{ readItem.title }}</a></li>
+      <li>
+        <button (click)="removeFromReadingList(readItem)">Remove</button>
+        <a href="{{ readItem.url }}" target="_blank">{{ readItem.title }}</a>
+      </li>
     }
   </ul>
 }
