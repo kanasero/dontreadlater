@@ -51,7 +51,7 @@ export class ReadingListService {
     })
   }
 
-  removeFromReadingListAsync(pageInfo: PageInfo) {
+  excludeFromReadingListAsync(pageInfo: PageInfo) {
     return this.getReadingListAsync().then(readingList => {
       readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
       this.readingList$.next(readingList)
@@ -68,6 +68,14 @@ export class ReadingListService {
 
   isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
     return readingList.some(pageInfoInList => pageInfoToCheck.url === pageInfoInList.url)
+  }
+
+  getTimeLeft(pageIngo: PageInfo) {
+    return this.timeToStore + pageIngo.add_time - this.timestamp;
+  }
+
+  isTimeLeftSoonOutdated(timeLeft: number): boolean {
+    return timeLeft < this.outdatedSoonThreshold
   }
 
   private removeOutdatedFromReadingList(pageInfo: PageInfo[]) {
@@ -108,13 +116,5 @@ export class ReadingListService {
 
   private chromeNotifyReadingListChange() {
     chrome.runtime.sendMessage({type: 'reading-list-update'})
-  }
-
-  getTimeLeft(pageIngo: PageInfo) {
-    return this.timeToStore + pageIngo.add_time - this.timestamp;
-  }
-
-  isTimeLeftSoonOutdated(timeLeft: number): boolean {
-    return timeLeft < this.outdatedSoonThreshold
   }
 }
