@@ -43,7 +43,7 @@ export class ReadingListService {
 
   addToReadingListAsync(pageInfo: PageInfo): Promise<void> {
     return this.getReadingListAsync().then(readingList => {
-      readingList.unshift(pageInfo)
+      readingList.push(pageInfo)
       this.readingList$.next(readingList)
       readingList = this.removeOutdatedFromReadingList(readingList)
       return chrome.storage.local.set({readingList: readingList})
