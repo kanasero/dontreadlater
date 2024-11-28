@@ -1,5 +1,5 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {ChromeService, PageInfo} from '../../../shared/services/chrome.service';
+import {PageInfo, ReadingListService} from '../../../shared/services/reading-list.service';
 import {Subscription} from 'rxjs';
 import {SecondsToTimeStringPipe} from '../../../shared/pipes/seconds-to-time-string.pipe';
 
@@ -17,14 +17,14 @@ export class PopupComponent implements OnInit, OnDestroy {
   pageInfo: PageInfo | undefined | null
   readingList: PageInfo[] | undefined
   isPageInReadingList = false
-  chromeService = inject(ChromeService)
+  readingListService = inject(ReadingListService)
 
   private subscription = new Subscription()
 
   ngOnInit() {
     Promise.all([
-      this.chromeService.getPageInfoAsync(),
-      this.chromeService.getReadingListAsync(),
+      this.readingListService.getPageInfoAsync(),
+      this.readingListService.getReadingListAsync(),
     ]).then(([pageInfo, readingList]) => {
       this.readingList = readingList
       this.pageInfo = pageInfo
@@ -32,7 +32,7 @@ export class PopupComponent implements OnInit, OnDestroy {
     })
 
     this.subscription.add(
-      this.chromeService.readingList$.subscribe(readingList => {
+      this.readingListService.readingList$.subscribe(readingList => {
         this.readingList = readingList
         this.checkIsPageInReadList()
       })
@@ -44,17 +44,17 @@ export class PopupComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe()
   }
 
-  private checkIsPageInReadList() {
-    const isDataReady = this.pageInfo === null || this.pageInfo === undefined || this.readingList === undefined;
-    this.isPageInReadingList = isDataReady ? false : this.chromeService.isPageInReadingList(this.pageInfo!, this.readingList!)
-  }
-
   addToReadingList(pageInfo: PageInfo) {
-    this.chromeService.addToReadingListAsync(pageInfo)
+    this.readingListService.addToReadingListAsync(pageInfo)
   }
 
   removeFromReadingList(pageInfo: PageInfo) {
-    this.chromeService.removeFromReadingListAsync(pageInfo)
+    this.readingListService.removeFromReadingListAsync(pageInfo)
+  }
+
+  private checkIsPageInReadList() {
+    const isDataReady = this.pageInfo === null || this.pageInfo === undefined || this.readingList === undefined;
+    this.isPageInReadingList = isDataReady ? false : this.readingListService.isPageInReadingList(this.pageInfo!, this.readingList!)
   }
 
 }

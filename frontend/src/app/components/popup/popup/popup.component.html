@@ -13,7 +13,7 @@
     @for (readItem of readingList; track readItem.url) {
       <li>
         <button (click)="removeFromReadingList(readItem)">Remove</button>
-        <span class="time-left">{{ chromeService.getTimeLeft(readItem) | secondsToTimeString }}</span>
+        <span class="time-left">{{ readingListService.getTimeLeft(readItem) | secondsToTimeString }}</span>
         <a href="{{ readItem.url }}" target="_blank">{{ readItem.title }}</a>
       </li>
     }

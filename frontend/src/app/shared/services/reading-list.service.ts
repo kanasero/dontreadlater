@@ -11,13 +11,13 @@ export interface PageInfo {
 @Injectable({
   providedIn: 'root'
 })
-export class ChromeService {
+export class ReadingListService {
   readingList$ = new BehaviorSubject<PageInfo[]>([])
 
   private timestamp = Math.floor(Date.now() / 1000)
   private timeToStore = 7 * 24 * 3600
 
-  private readonly _timestampInterval = 3000
+  private readonly _timestampInterval = 10000
 
   constructor() {
     this.getReadingListAsync().then(readingList => this.readingList$.next)
