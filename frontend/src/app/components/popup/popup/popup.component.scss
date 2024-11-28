@@ -100,7 +100,10 @@ $removeColor: #c44;
         .time-left {
           padding: .1em .3em;
           white-space: nowrap;
-          background-color: #ffe98d;
+          // background-color: #ffe98d;
+          background-color: #ddffdd;
+          background-color: #aaa;
+          color: #fff;
         }
 
         .btn-remove {
@@ -119,6 +122,15 @@ $removeColor: #c44;
 
       &:nth-child(2n + 1) {
         background-color: #eee;
+      }
+
+      &.soon-outdated {
+        a {
+          .time-left {
+            background-color: #ffe98d;
+            color: #000;
+          }
+        }
       }
     }
   }

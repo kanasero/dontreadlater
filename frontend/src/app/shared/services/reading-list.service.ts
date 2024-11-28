@@ -16,6 +16,7 @@ export class ReadingListService {
 
   private timestamp = Math.floor(Date.now() / 1000)
   private timeToStore = 7 * 24 * 3600
+  private outdatedSoonThreshold = 2 * 24 * 3600
 
   private readonly _timestampInterval = 10000
 
@@ -111,5 +112,9 @@ export class ReadingListService {
 
   getTimeLeft(pageIngo: PageInfo) {
     return this.timeToStore + pageIngo.add_time - this.timestamp;
+  }
+
+  isTimeLeftSoonOutdated(timeLeft: number): boolean {
+    return timeLeft < this.outdatedSoonThreshold
   }
 }

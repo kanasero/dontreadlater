@@ -23,7 +23,7 @@
       @for (readItem of readingList; track readItem.url) {
         @let timeLeft = readingListService.getTimeLeft(readItem);
         @if (timeLeft > 0) {
-          <li>
+          <li [class.soon-outdated]="readingListService.isTimeLeftSoonOutdated(timeLeft)">
             <a href="{{ readItem.url }}" target="_blank">
               <button (click)="removeFromReadingList(readItem); $event.preventDefault()"
                       title="Remove from the Reading List"
