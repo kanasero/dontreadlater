@@ -1,11 +1,14 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {ChromeService, PageInfo} from '../../../shared/services/chrome.service';
 import {Subscription} from 'rxjs';
+import {SecondsToTimeStringPipe} from '../../../shared/pipes/seconds-to-time-string.pipe';
 
 
 @Component({
   selector: 'app-popup',
-  imports: [],
+  imports: [
+    SecondsToTimeStringPipe
+  ],
   templateUrl: './popup.component.html',
   standalone: true,
   styleUrl: './popup.component.scss'
@@ -14,8 +17,8 @@ export class PopupComponent implements OnInit, OnDestroy {
   pageInfo: PageInfo | undefined | null
   readingList: PageInfo[] | undefined
   isPageInReadingList = false
+  chromeService = inject(ChromeService)
 
-  private chromeService = inject(ChromeService)
   private subscription = new Subscription()
 
   ngOnInit() {
@@ -34,6 +37,7 @@ export class PopupComponent implements OnInit, OnDestroy {
         this.checkIsPageInReadList()
       })
     )
+
   }
 
   ngOnDestroy() {
@@ -52,4 +56,5 @@ export class PopupComponent implements OnInit, OnDestroy {
   removeFromReadingList(pageInfo: PageInfo) {
     this.chromeService.removeFromReadingListAsync(pageInfo)
   }
+
 }

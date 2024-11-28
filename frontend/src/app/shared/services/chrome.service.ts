@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, timer} from 'rxjs';
 import Tab = chrome.tabs.Tab;
 
 export interface PageInfo {
   url: string
   title: string
+  add_time: number
 }
 
 @Injectable({
@@ -13,16 +14,27 @@ export interface PageInfo {
 export class ChromeService {
   readingList$ = new BehaviorSubject<PageInfo[]>([])
 
+  private timestamp = Math.floor(Date.now() / 1000)
+  private timeToStore = 7 * 24 * 3600
+
+  private readonly _timestampInterval = 3000
+
   constructor() {
     this.getReadingListAsync().then(readingList => this.readingList$.next)
+
+    timer(this._timestampInterval, this._timestampInterval).subscribe(() => {
+      this.timestamp = Math.floor(Date.now() / 1000)
+    })
   }
 
   getPageInfoAsync(): Promise<PageInfo | null> {
     return new Promise(resolve => {
       this.getActiveTabAsync().then(tab => {
         this.getTabTitle(tab).then(title => {
+          const timestamp = Math.floor(Date.now() / 1000)
           const url = tab.url ?? null
-          resolve(title === null || url === null ? null : {url, title})
+          const ifNoPageInfo = title === null || url === null
+          resolve(ifNoPageInfo ? null : {url, title, add_time: timestamp})
         })
       })
     })
@@ -81,5 +93,9 @@ export class ChromeService {
         resolve(null)
       }
     })
+  }
+
+  getTimeLeft(pageIngo: PageInfo) {
+    return this.timeToStore + pageIngo.add_time - this.timestamp;
   }
 }
