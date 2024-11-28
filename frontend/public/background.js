@@ -60,7 +60,7 @@ getSettings().then(settings => {
   outdatedSoonThreshold = settings.outdatedSoonThreshold * 24 * 3600
 
   chrome.runtime.onMessage.addListener(message => {
-    if (message === 'settings-update') {
+    if (message === 'settings-update' || message === 'reading-list-update') {
       updateOutdatedSoonCountNotification()
     }
   })
