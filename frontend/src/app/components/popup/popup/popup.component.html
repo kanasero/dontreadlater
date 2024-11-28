@@ -11,11 +11,14 @@
   }
   <ul class="reading-list">
     @for (readItem of readingList; track readItem.url) {
-      <li>
-        <button (click)="removeFromReadingList(readItem)">Remove</button>
-        <span class="time-left">{{ readingListService.getTimeLeft(readItem) | secondsToTimeString }}</span>
-        <a href="{{ readItem.url }}" target="_blank">{{ readItem.title }}</a>
-      </li>
+      @let timeLeft = readingListService.getTimeLeft(readItem);
+      @if (timeLeft > 0) {
+        <li>
+          <button (click)="removeFromReadingList(readItem)">Remove</button>
+          <span class="time-left">{{ timeLeft | secondsToTimeString }}</span>
+          <a href="{{ readItem.url }}" target="_blank">{{ readItem.title }}</a>
+        </li>
+      }
     }
   </ul>
 }

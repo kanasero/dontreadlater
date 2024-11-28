@@ -44,6 +44,16 @@ export class ReadingListService {
     return this.getReadingListAsync().then(readingList => {
       readingList.unshift(pageInfo)
       this.readingList$.next(readingList)
+      readingList = this.removeOutdatedFromReadingList(readingList)
+      return chrome.storage.local.set({readingList: readingList})
+    })
+  }
+
+  removeFromReadingListAsync(pageInfo: PageInfo) {
+    return this.getReadingListAsync().then(readingList => {
+      readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
+      this.readingList$.next(readingList)
+      readingList = this.removeOutdatedFromReadingList(readingList)
       return chrome.storage.local.set({readingList: readingList})
     })
   }
@@ -57,12 +67,10 @@ export class ReadingListService {
     return readingList.some(pageInfoInList => pageInfoToCheck.url === pageInfoInList.url)
   }
 
-  removeFromReadingListAsync(pageInfo: PageInfo) {
-    return this.getReadingListAsync().then(readingList => {
-      readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
-      this.readingList$.next(readingList)
-      return chrome.storage.local.set({readingList: readingList})
-    })
+  private removeOutdatedFromReadingList(pageInfo: PageInfo[]) {
+    const now = Math.floor(Date.now() / 1000)
+    pageInfo = pageInfo.filter(pageInfoItem => now - pageInfoItem.add_time <= this.timeToStore)
+    return pageInfo
   }
 
   private getActiveTabAsync(): Promise<Tab> {
