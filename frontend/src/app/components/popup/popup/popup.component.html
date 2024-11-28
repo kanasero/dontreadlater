@@ -1,20 +1,32 @@
+@if (isSettingsVisible) {
+  <app-settings></app-settings>
+}
 @if (pageInfo !== undefined) {
   @if (pageInfo !== null) {
-    <div class="bookmark">
-      @if (isPageInReadingList) {
-        <button (click)="removeFromReadingList(pageInfo)" class="btn-remove"
-                title="Remove from the Reading List">
-          <svg-icon src="/icons/remove.svg"/>
-          <span>{{ pageInfo.title }}</span>
-        </button>
-      } @else {
-        <button (click)="addToReadingList(pageInfo)" class="btn-add"
-                title="Add to the Reading List">
-          <svg-icon src="/icons/add.svg"/>
-          <span>Add "{{ pageInfo.title }}"</span>
-        </button>
-      }
+    <div class="head">
+      <div class="bookmark">
+        @if (isPageInReadingList) {
+          <button (click)="removeFromReadingList(pageInfo)" class="btn-remove"
+                  title="Remove from the Reading List">
+            <svg-icon src="/icons/remove.svg"/>
+            <span>{{ pageInfo.title }}</span>
+          </button>
+        } @else {
+          <button (click)="addToReadingList(pageInfo)" class="btn-add"
+                  title="Add to the Reading List">
+            <svg-icon src="/icons/add.svg"/>
+            <span>Add "{{ pageInfo.title }}"</span>
+          </button>
+        }
 
+      </div>
+      <div class="actions">
+        <button class="btn-ico"
+                title="Show/hide settings"
+                (click)="isSettingsVisible = !isSettingsVisible">
+          <svg-icon src="icons/settings.svg"/>
+        </button>
+      </div>
     </div>
   }
   @if (readingList?.length) {

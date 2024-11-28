@@ -24,53 +24,65 @@ $removeColor: #c44;
     }
   }
 
-  .bookmark {
+  .head {
     display: flex;
-    gap: .5em;
     align-items: center;
-    //border-bottom: dotted 2px #000;
-    padding: .4em .3em;
 
-    button {
-      cursor: pointer;
-      padding: .5em 1em;
-      border: solid 1px #999;
-      width: 100%;
+    .bookmark {
+      flex: 1 1 auto;
       display: flex;
-      align-items: center;
-      justify-content: center;
       gap: .5em;
-      border-radius: 4px;
-      transition: background-color .25s, color .25s;
+      align-items: center;
+      padding: .4em .3em;
 
-      svg-icon {
-        width: 24px;
-        height: 24px;
-        svg {
-          transition: fill .25s;
-        }
-      }
+      button {
+        cursor: pointer;
+        padding: .5em 1em;
+        border: solid 1px #999;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5em;
+        border-radius: 4px;
+        transition: background-color .25s, color .25s;
 
-      &.btn-add {
-        background-color: #cfc;
-
-        svg {
-          fill: #0a0;
+        svg-icon {
           width: 24px;
           height: 24px;
-          //fill: #fff;
-
-        }
-
-        &:hover {
-          background-color: #0a0;
-          color: #fff;
 
           svg {
-            fill: #fff;
+            transition: fill .25s;
+          }
+        }
+
+        &.btn-add {
+          background-color: #cfc;
+
+          svg {
+            fill: #0a0;
+            width: 24px;
+            height: 24px;
+          }
+
+          &:hover {
+            background-color: #0a0;
+            color: #fff;
+
+            svg {
+              fill: #fff;
+            }
           }
         }
       }
+    }
+
+    .actions {
+      padding: 0 .5em;
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: flex-end;
+      gap: .5em;
     }
   }
 

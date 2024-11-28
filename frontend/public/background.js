@@ -1,5 +1,14 @@
-const timeToStore = 7 * 24 * 3600
-const outdatedSoonThreshold = 2 * 24 * 3600
+let timeToStore
+let outdatedSoonThreshold
+const defaultSettings = {
+  timeToStore: 7,
+  outdatedSoonThreshold: 3,
+}
+
+function getSettings() {
+  return chrome.storage.local.get('settings')
+    .then(result => result['settings'] ?? defaultSettings)
+}
 
 function getReadingListAsync() {
   return chrome.storage.local.get('readingList')
@@ -46,10 +55,17 @@ chrome.action.setBadgeTextColor({
   color: '#ffffff'
 })
 
-chrome.runtime.onMessage.addListener(request => {
+getSettings().then(settings => {
+  timeToStore = settings.timeToStore * 24 * 3600
+  outdatedSoonThreshold = settings.outdatedSoonThreshold * 24 * 3600
+
+  chrome.runtime.onMessage.addListener(message => {
+    if (message === 'settings-update') {
+      updateOutdatedSoonCountNotification()
+    }
+  })
+
   updateOutdatedSoonCountNotification()
+
+  setTimeout(updateOutdatedSoonCountNotification, 10000);
 })
-
-updateOutdatedSoonCountNotification()
-
-setTimeout(updateOutdatedSoonCountNotification, 10000);

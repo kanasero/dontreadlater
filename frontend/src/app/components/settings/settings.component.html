@@ -1,0 +1,13 @@
+<form [formGroup]="settings">
+  <div class="controls">
+    <div class="control">
+      <label>Days to store before deletion:</label>
+      <input [formControl]="settings.controls.timeToStore" max="7" min="1" type="number">
+    </div>
+    <div class="control">
+      <label>Days left notification:</label>
+      <input [formControl]="settings.controls.outdatedSoonThreshold" [max]="settings.value.timeToStore ?? 0" min="1"
+             type="number">
+    </div>
+  </div>
+</form>

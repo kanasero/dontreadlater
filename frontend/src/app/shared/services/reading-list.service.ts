@@ -1,5 +1,6 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject, timer} from 'rxjs';
+import {SettingsService} from './settings.service';
 import Tab = chrome.tabs.Tab;
 
 export interface PageInfo {
@@ -14,14 +15,20 @@ export interface PageInfo {
 export class ReadingListService {
   readingList$ = new BehaviorSubject<PageInfo[]>([])
 
+  private settingsService = inject(SettingsService)
   private timestamp = Math.floor(Date.now() / 1000)
-  private timeToStore = 7 * 24 * 3600
-  private outdatedSoonThreshold = 2 * 24 * 3600
+  private timeToStore: number | undefined
+  private outdatedSoonThreshold: number | undefined
 
   private readonly _timestampInterval = 10000
 
   constructor() {
     this.getReadingListAsync().then(readingList => this.readingList$.next)
+
+    this.settingsService.get$().then(settings => {
+      this.timeToStore = settings.timeToStore * 24 * 3600
+      this.outdatedSoonThreshold = settings.outdatedSoonThreshold * 24 * 3600
+    })
 
     timer(this._timestampInterval, this._timestampInterval).subscribe(() => {
       this.timestamp = Math.floor(Date.now() / 1000)
@@ -71,16 +78,18 @@ export class ReadingListService {
   }
 
   getTimeLeft(pageIngo: PageInfo) {
-    return this.timeToStore + pageIngo.add_time - this.timestamp;
+    return this.timeToStore !== undefined ? this.timeToStore + pageIngo.add_time - this.timestamp : 0;
   }
 
   isTimeLeftSoonOutdated(timeLeft: number): boolean {
-    return timeLeft < this.outdatedSoonThreshold
+    return this.outdatedSoonThreshold !== undefined ? timeLeft < this.outdatedSoonThreshold : false
   }
 
   private removeOutdatedFromReadingList(pageInfo: PageInfo[]) {
-    const now = Math.floor(Date.now() / 1000)
-    pageInfo = pageInfo.filter(pageInfoItem => now - pageInfoItem.add_time <= this.timeToStore)
+    if (this.timeToStore !== undefined) {
+      const now = Math.floor(Date.now() / 1000)
+      pageInfo = pageInfo.filter(pageInfoItem => now - pageInfoItem.add_time <= this.timeToStore!)
+    }
     return pageInfo
   }
 

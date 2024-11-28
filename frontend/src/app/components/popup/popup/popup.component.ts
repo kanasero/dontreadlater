@@ -3,12 +3,14 @@ import {PageInfo, ReadingListService} from '../../../shared/services/reading-lis
 import {Subscription} from 'rxjs';
 import {SecondsToTimeStringPipe} from '../../../shared/pipes/seconds-to-time-string.pipe';
 import {SvgIconComponent} from 'angular-svg-icon';
+import {SettingsComponent} from '../../settings/settings.component';
 
 @Component({
   selector: 'app-popup',
   imports: [
     SecondsToTimeStringPipe,
     SvgIconComponent,
+    SettingsComponent,
   ],
   templateUrl: './popup.component.html',
   standalone: true,
@@ -17,6 +19,7 @@ import {SvgIconComponent} from 'angular-svg-icon';
 export class PopupComponent implements OnInit, OnDestroy {
   pageInfo: PageInfo | undefined | null
   readingList: PageInfo[] | undefined
+  isSettingsVisible = false
   isPageInReadingList = false
   readingListService = inject(ReadingListService)
 
