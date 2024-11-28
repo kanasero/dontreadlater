@@ -42,7 +42,7 @@ export class ReadingListService {
 
   addToReadingListAsync(pageInfo: PageInfo): Promise<void> {
     return this.getReadingListAsync().then(readingList => {
-      readingList.push(pageInfo)
+      readingList.unshift(pageInfo)
       this.readingList$.next(readingList)
       return chrome.storage.local.set({readingList: readingList})
     })
