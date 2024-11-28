@@ -1,24 +1,41 @@
 @if (pageInfo !== undefined) {
   @if (pageInfo !== null) {
-    <p>{{ pageInfo.title }}</p>
-    @if (isPageInReadingList) {
-      <button (click)="removeFromReadingList(pageInfo)">Remove from read list</button>
-    } @else {
-      <button (click)="addToReadingList(pageInfo)">Add to read list</button>
-    }
-  } @else {
-     <p>No access to the page</p>
-  }
-  <ul class="reading-list">
-    @for (readItem of readingList; track readItem.url) {
-      @let timeLeft = readingListService.getTimeLeft(readItem);
-      @if (timeLeft > 0) {
-        <li>
-          <button (click)="removeFromReadingList(readItem)">Remove</button>
-          <span class="time-left">{{ timeLeft | secondsToTimeString }}</span>
-          <a href="{{ readItem.url }}" target="_blank">{{ readItem.title }}</a>
-        </li>
+    <div class="bookmark">
+      @if (isPageInReadingList) {
+        <button (click)="removeFromReadingList(pageInfo)" class="btn-remove"
+                title="Remove from the Reading List">
+          <svg-icon src="/icons/remove.svg"/>
+          <span>{{ pageInfo.title }}</span>
+        </button>
+      } @else {
+        <button (click)="addToReadingList(pageInfo)" class="btn-add"
+                title="Add to the Reading List">
+          <svg-icon src="/icons/add.svg"/>
+          <span>{{ pageInfo.title }}</span>
+        </button>
       }
-    }
-  </ul>
+
+    </div>
+  }
+  @if (readingList?.length) {
+    <h2>Don't Read Later. Read Now!</h2>
+    <ul class="reading-list">
+      @for (readItem of readingList; track readItem.url) {
+        @let timeLeft = readingListService.getTimeLeft(readItem);
+        @if (timeLeft > 0) {
+          <li>
+            <a href="{{ readItem.url }}" target="_blank">
+              <button (click)="removeFromReadingList(readItem); $event.preventDefault()"
+                      title="Remove from the Reading List"
+                      class="btn-ico btn-remove">
+                <svg-icon src="/icons/remove.svg"/>
+              </button>
+              <span class="time-left">{{ timeLeft | secondsToTimeString }}</span>
+              <span class="title">{{ readItem.title }}</span>
+            </a>
+          </li>
+        }
+      }
+    </ul>
+  }
 }

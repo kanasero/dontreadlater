@@ -1,11 +1,124 @@
+$removeColor: #c44;
+
 :host {
   display: block;
-  width: 600px;
+  width: 700px;
+  margin: 0 auto;
+
+  .btn-remove {
+    border-radius: 4px;
+    transition: background-color .25s, color .25s;
+
+    svg {
+      fill: $removeColor;
+      transition: fill .25s;
+    }
+
+    &:hover {
+      background-color: $removeColor;
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
+    }
+  }
+
+  .bookmark {
+    display: flex;
+    gap: .5em;
+    align-items: center;
+    //border-bottom: dotted 2px #000;
+    padding: .4em .3em;
+
+    button {
+      cursor: pointer;
+      padding: .5em 1em;
+      border: solid 1px #999;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5em;
+      border-radius: 4px;
+      transition: background-color .25s, color .25s;
+
+      svg-icon {
+        width: 24px;
+        height: 24px;
+        svg {
+          transition: fill .25s;
+        }
+      }
+
+      &.btn-add {
+        background-color: #cfc;
+
+        svg {
+          fill: #0a0;
+          width: 24px;
+          height: 24px;
+          //fill: #fff;
+
+        }
+
+        &:hover {
+          background-color: #0a0;
+          color: #fff;
+
+          svg {
+            fill: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  h2 {
+    color: #0a0;
+    font-size: 1em;
+    margin: 1em 0;
+    padding: 0;
+    text-align: center;
+  }
 
   .reading-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
     li {
-      .time-left {
-        background-color: #ffe98d;
+      a {
+        text-decoration: none;
+        padding: .5em .3em;
+        display: flex;
+        align-items: center;
+        gap: .5em;
+        color: inherit;
+
+        .time-left {
+          padding: .1em .3em;
+          white-space: nowrap;
+          background-color: #ffe98d;
+        }
+
+        .btn-remove {
+          flex: 0 0 auto;
+        }
+
+        .title {
+          transition: color .25s;
+        }
+        &:hover {
+          .title {
+            color: #00f;
+          }
+        }
+      }
+
+      &:nth-child(2n + 1) {
+        background-color: #eee;
       }
     }
   }
