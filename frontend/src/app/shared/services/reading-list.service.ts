@@ -46,6 +46,7 @@ export class ReadingListService {
       this.readingList$.next(readingList)
       readingList = this.removeOutdatedFromReadingList(readingList)
       return chrome.storage.local.set({readingList: readingList})
+        .then(this.chromeNotifyReadingListChange)
     })
   }
 
@@ -55,6 +56,7 @@ export class ReadingListService {
       this.readingList$.next(readingList)
       readingList = this.removeOutdatedFromReadingList(readingList)
       return chrome.storage.local.set({readingList: readingList})
+        .then(this.chromeNotifyReadingListChange)
     })
   }
 
@@ -101,6 +103,10 @@ export class ReadingListService {
         resolve(null)
       }
     })
+  }
+
+  private chromeNotifyReadingListChange() {
+    chrome.runtime.sendMessage({type: 'reading-list-update'})
   }
 
   getTimeLeft(pageIngo: PageInfo) {
