@@ -24,7 +24,9 @@ export class ReadingListService {
   private readonly _readingListField = 'readingList'
 
   constructor() {
-    this.getReadingListAsync().then(readingList => this.readingList$.next)
+    this.removeOutdatedItems().then(() => {
+      this.getReadingListAsync().then(readingList => this.readingList$.next)
+    })
 
     this.settingsService.get$().then(settings => {
       this.timeToStore = settings.timeToStore * 24 * 3600
@@ -62,8 +64,8 @@ export class ReadingListService {
   removeFromReadingListAsync(pageInfo: PageInfo) {
     return this.getReadingListAsync().then(readingList => {
       readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
-      this.readingList$.next(readingList)
       readingList = this.excludeOutdatedFromReadingList(readingList)
+      this.readingList$.next(readingList)
       return chrome.storage.local.set({[this._readingListField]: readingList})
         .then(this.chromeNotifyReadingListChange)
     })
@@ -71,7 +73,7 @@ export class ReadingListService {
 
   getReadingListAsync(): Promise<PageInfo[]> {
     return chrome.storage.local.get(this._readingListField)
-      .then(({readingList}) => readingList ?? [])
+      .then(({readingList}) => readingList = readingList ?? [])
   }
 
   isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
@@ -84,6 +86,19 @@ export class ReadingListService {
 
   isTimeLeftSoonOutdated(timeLeft: number): boolean {
     return this.outdatedSoonThreshold !== undefined ? timeLeft < this.outdatedSoonThreshold : false
+  }
+
+  removeOutdatedItems(): Promise<void> {
+    return this.getReadingListAsync().then(readingList => {
+      const clearedReadingList = this.excludeOutdatedFromReadingList(readingList)
+      if (clearedReadingList.length !== readingList.length) {
+        this.readingList$.next(readingList)
+        return chrome.storage.local.set({[this._readingListField]: readingList})
+          .then(this.chromeNotifyReadingListChange)
+      } else {
+        return Promise.resolve()
+      }
+    })
   }
 
   private excludeOutdatedFromReadingList(pageInfo: PageInfo[]) {
