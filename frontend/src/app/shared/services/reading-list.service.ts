@@ -1,6 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject, timer} from 'rxjs';
 import {SettingsService} from './settings.service';
+import {StatisticsService} from './statistics.service';
+import {ChromeService} from './chrome.service';
 import Tab = chrome.tabs.Tab;
 
 export interface PageInfo {
@@ -15,6 +17,8 @@ export interface PageInfo {
 export class ReadingListService {
   readingList$ = new BehaviorSubject<PageInfo[]>([])
 
+  private chromeService = inject(ChromeService)
+  private statisticsService = inject(StatisticsService)
   private settingsService = inject(SettingsService)
   private timestamp = Math.floor(Date.now() / 1000)
   private timeToStore: number | undefined
@@ -55,17 +59,24 @@ export class ReadingListService {
     return this.getReadingListAsync().then(readingList => {
       readingList.push(pageInfo)
       this.readingList$.next(readingList)
-      readingList = this.excludeOutdatedFromReadingList(readingList)
-      return this.chromeStorageUpdateAsync(readingList)
+      const clearedReadingList = this.excludeOutdatedFromReadingList(readingList)
+      const removedCount = readingList.length - clearedReadingList.length
+      return this.chromeStorageUpdateAsync(clearedReadingList)
+        .then(this.statisticsService.addUnreadAsync.bind(this.statisticsService, removedCount))
     })
   }
 
   removeFromReadingListAsync(pageInfo: PageInfo) {
     return this.getReadingListAsync().then(readingList => {
       readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
-      readingList = this.excludeOutdatedFromReadingList(readingList)
-      this.readingList$.next(readingList)
-      return this.chromeStorageUpdateAsync(readingList)
+      const clearedReadingList = this.excludeOutdatedFromReadingList(readingList)
+      const removedCount = readingList.length - clearedReadingList.length
+      this.readingList$.next(clearedReadingList)
+      return this.chromeStorageUpdateAsync(clearedReadingList)
+        .then(this.statisticsService.incrementStatisticsAsync.bind(this.statisticsService, {
+          read: 1,
+          unread: removedCount,
+        }))
     })
   }
 
@@ -89,8 +100,10 @@ export class ReadingListService {
     return this.getReadingListAsync().then(readingList => {
       const clearedReadingList = this.excludeOutdatedFromReadingList(readingList)
       if (clearedReadingList.length !== readingList.length) {
+        const removedCount = readingList.length - clearedReadingList.length
         this.readingList$.next(readingList)
         return this.chromeStorageUpdateAsync(readingList)
+          .then(this.statisticsService.addUnreadAsync.bind(this.statisticsService, removedCount))
       } else {
         return Promise.resolve()
       }
@@ -98,12 +111,11 @@ export class ReadingListService {
   }
 
   private chromeStorageGetAsync() {
-    return chrome.storage.local.get(this._readingListField)
-      .then(({readingList}) => readingList = readingList ?? []);
+    return this.chromeService.storageGetAsync<PageInfo[]>(this._readingListField, [])
   }
 
   private chromeStorageUpdateAsync(readingList: PageInfo[]) {
-    return chrome.storage.local.set({[this._readingListField]: readingList})
+    return this.chromeService.storageSetAsync(this._readingListField, readingList)
       .then(this.chromeNotifyReadingListChange);
   }
 
