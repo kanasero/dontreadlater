@@ -56,8 +56,7 @@ export class ReadingListService {
       readingList.push(pageInfo)
       this.readingList$.next(readingList)
       readingList = this.excludeOutdatedFromReadingList(readingList)
-      return chrome.storage.local.set({[this._readingListField]: readingList})
-        .then(this.chromeNotifyReadingListChange)
+      return this.chromeStorageUpdateAsync(readingList)
     })
   }
 
@@ -66,14 +65,12 @@ export class ReadingListService {
       readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
       readingList = this.excludeOutdatedFromReadingList(readingList)
       this.readingList$.next(readingList)
-      return chrome.storage.local.set({[this._readingListField]: readingList})
-        .then(this.chromeNotifyReadingListChange)
+      return this.chromeStorageUpdateAsync(readingList)
     })
   }
 
   getReadingListAsync(): Promise<PageInfo[]> {
-    return chrome.storage.local.get(this._readingListField)
-      .then(({readingList}) => readingList = readingList ?? [])
+    return this.chromeStorageGetAsync()
   }
 
   isPageInReadingList(pageInfoToCheck: PageInfo, readingList: PageInfo[]) {
@@ -93,12 +90,21 @@ export class ReadingListService {
       const clearedReadingList = this.excludeOutdatedFromReadingList(readingList)
       if (clearedReadingList.length !== readingList.length) {
         this.readingList$.next(readingList)
-        return chrome.storage.local.set({[this._readingListField]: readingList})
-          .then(this.chromeNotifyReadingListChange)
+        return this.chromeStorageUpdateAsync(readingList)
       } else {
         return Promise.resolve()
       }
     })
+  }
+
+  private chromeStorageGetAsync() {
+    return chrome.storage.local.get(this._readingListField)
+      .then(({readingList}) => readingList = readingList ?? []);
+  }
+
+  private chromeStorageUpdateAsync(readingList: PageInfo[]) {
+    return chrome.storage.local.set({[this._readingListField]: readingList})
+      .then(this.chromeNotifyReadingListChange);
   }
 
   private excludeOutdatedFromReadingList(pageInfo: PageInfo[]) {
