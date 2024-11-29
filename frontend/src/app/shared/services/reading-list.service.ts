@@ -53,17 +53,17 @@ export class ReadingListService {
     return this.getReadingListAsync().then(readingList => {
       readingList.push(pageInfo)
       this.readingList$.next(readingList)
-      readingList = this.removeOutdatedFromReadingList(readingList)
+      readingList = this.excludeOutdatedFromReadingList(readingList)
       return chrome.storage.local.set({[this._readingListField]: readingList})
         .then(this.chromeNotifyReadingListChange)
     })
   }
 
-  excludeFromReadingListAsync(pageInfo: PageInfo) {
+  removeFromReadingListAsync(pageInfo: PageInfo) {
     return this.getReadingListAsync().then(readingList => {
       readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
       this.readingList$.next(readingList)
-      readingList = this.removeOutdatedFromReadingList(readingList)
+      readingList = this.excludeOutdatedFromReadingList(readingList)
       return chrome.storage.local.set({[this._readingListField]: readingList})
         .then(this.chromeNotifyReadingListChange)
     })
@@ -86,7 +86,7 @@ export class ReadingListService {
     return this.outdatedSoonThreshold !== undefined ? timeLeft < this.outdatedSoonThreshold : false
   }
 
-  private removeOutdatedFromReadingList(pageInfo: PageInfo[]) {
+  private excludeOutdatedFromReadingList(pageInfo: PageInfo[]) {
     if (this.timeToStore !== undefined) {
       const now = Math.floor(Date.now() / 1000)
       pageInfo = pageInfo.filter(pageInfoItem => now - pageInfoItem.add_time <= this.timeToStore!)

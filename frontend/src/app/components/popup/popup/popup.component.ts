@@ -55,7 +55,7 @@ export class PopupComponent implements OnInit, OnDestroy {
   }
 
   removeFromReadingList(pageInfo: PageInfo) {
-    this.readingListService.excludeFromReadingListAsync(pageInfo)
+    this.readingListService.removeFromReadingListAsync(pageInfo)
   }
 
   private checkIsPageInReadList() {
