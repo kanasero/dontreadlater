@@ -37,7 +37,7 @@ function updateOutdatedSoonCountNotification() {
     chrome.action.setBadgeText({
       text: count > 0 ? count.toString() : ''
     })
-    let title = 'Dont Read Later'
+    let title = "Don't Read Later"
     if (count > 0) {
       title += `\n${count} article${count > 1 ? 's' : ''} will be outdated soon`
     }

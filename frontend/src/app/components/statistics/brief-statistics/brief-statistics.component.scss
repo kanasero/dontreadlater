@@ -36,7 +36,7 @@ $colorPrimaryLight: #cfc;
       opacity: 1;
 
       .label {
-        transition: opacity .25s;
+        transition: opacity .25s, font-size 0s .25s;
         opacity: 1;
         font-size: .8em;
       }
