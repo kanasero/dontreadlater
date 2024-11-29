@@ -26,6 +26,7 @@ export class ReadingListService {
 
   private readonly _timestampInterval = 10000
   private readonly _readingListField = 'readingList'
+  private readonly _quickDeletionThreshold = 15 * 60
 
   constructor() {
     this.removeOutdatedItems().then(() => {
@@ -73,10 +74,17 @@ export class ReadingListService {
       const removedCount = readingList.length - clearedReadingList.length
       this.readingList$.next(clearedReadingList)
       return this.chromeStorageUpdateAsync(clearedReadingList)
-        .then(this.statisticsService.incrementStatisticsAsync.bind(this.statisticsService, {
-          read: 1,
-          unread: removedCount,
-        }))
+        .then(() => {
+          const isQuickDeletion = this.isQuickDeletion(pageInfo)
+          if (!isQuickDeletion || removedCount > 0) {
+            return this.statisticsService.incrementStatisticsAsync({
+              read: this.isQuickDeletion(pageInfo) ? 0 : 1,
+              unread: removedCount,
+            })
+          } else {
+            return Promise.resolve()
+          }
+        })
     })
   }
 
@@ -159,5 +167,10 @@ export class ReadingListService {
 
   private chromeNotifyReadingListChange() {
     chrome.runtime.sendMessage({type: 'reading-list-update'})
+  }
+
+  private isQuickDeletion(pageInfo: PageInfo) {
+    const now = Math.floor(Date.now() / 1000)
+    return now - pageInfo.add_time < this._quickDeletionThreshold;
   }
 }

@@ -33,11 +33,9 @@ export class StatisticsService {
   incrementStatisticsAsync(incrementStatistics: Partial<Record<keyof Statistics, number>>): Promise<void> {
     return this.chromeService.storageGetAsync<Statistics>(this._statisticsField, this._initialStatistics)
       .then(statistics => {
-        console.log(statistics, incrementStatistics)
         for (const key in incrementStatistics) {
           statistics[key as keyof Statistics] += incrementStatistics[key as keyof Statistics]!
         }
-        console.log(statistics)
         return this.saveStatistics(statistics)
       })
   }
