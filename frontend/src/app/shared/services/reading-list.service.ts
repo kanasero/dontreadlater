@@ -21,6 +21,7 @@ export class ReadingListService {
   private outdatedSoonThreshold: number | undefined
 
   private readonly _timestampInterval = 10000
+  private readonly _readingListField = 'readingList'
 
   constructor() {
     this.getReadingListAsync().then(readingList => this.readingList$.next)
@@ -53,7 +54,7 @@ export class ReadingListService {
       readingList.push(pageInfo)
       this.readingList$.next(readingList)
       readingList = this.removeOutdatedFromReadingList(readingList)
-      return chrome.storage.local.set({readingList: readingList})
+      return chrome.storage.local.set({[this._readingListField]: readingList})
         .then(this.chromeNotifyReadingListChange)
     })
   }
@@ -63,13 +64,13 @@ export class ReadingListService {
       readingList = readingList.filter(pageInfoInList => pageInfo.url !== pageInfoInList.url)
       this.readingList$.next(readingList)
       readingList = this.removeOutdatedFromReadingList(readingList)
-      return chrome.storage.local.set({readingList: readingList})
+      return chrome.storage.local.set({[this._readingListField]: readingList})
         .then(this.chromeNotifyReadingListChange)
     })
   }
 
   getReadingListAsync(): Promise<PageInfo[]> {
-    return chrome.storage.local.get('readingList')
+    return chrome.storage.local.get(this._readingListField)
       .then(({readingList}) => readingList ?? [])
   }
 
