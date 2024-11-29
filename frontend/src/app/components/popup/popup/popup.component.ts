@@ -5,6 +5,7 @@ import {SecondsToTimeStringPipe} from '../../../shared/pipes/seconds-to-time-str
 import {SvgIconComponent} from 'angular-svg-icon';
 import {SettingsComponent} from '../../settings/settings.component';
 import {NgTemplateOutlet} from '@angular/common';
+import {BriefStatisticsComponent} from '../../statistics/brief-statistics/brief-statistics.component';
 
 @Component({
   selector: 'app-popup',
@@ -13,6 +14,7 @@ import {NgTemplateOutlet} from '@angular/common';
     SvgIconComponent,
     SettingsComponent,
     NgTemplateOutlet,
+    BriefStatisticsComponent,
   ],
   templateUrl: './popup.component.html',
   standalone: true,

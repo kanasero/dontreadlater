@@ -1,0 +1,45 @@
+$colorDanger: #c44;
+$colorPrimary: #0a0;
+$colorPrimaryLight: #cfc;
+
+:host {
+  display: block;
+
+  .total {
+    margin: .5em;
+    background-color: $colorDanger;
+    position: relative;
+    opacity: .9;
+    transition: opacity .25s;
+
+    .label {
+      font-size: .3em;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: .3em .5em;
+      color: #fff;
+      opacity: 0;
+    }
+
+    .read {
+      width: var(--percentage);
+      background-color: $colorPrimary;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+
+    &:hover {
+      opacity: 1;
+
+      .label {
+        transition: opacity .25s;
+        opacity: 1;
+        font-size: .8em;
+      }
+    }
+  }
+}

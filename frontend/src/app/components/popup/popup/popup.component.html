@@ -40,8 +40,10 @@
   } @else {
     <ng-container *ngTemplateOutlet="actions"></ng-container>
   }
+
   @if (readingList?.length) {
     <h2>Don't Read Later. Read Now!</h2>
+    <app-brief-statistics></app-brief-statistics>
     <ul class="reading-list">
       @for (readItem of readingList; track readItem.url) {
         @let timeLeft = readingListService.getTimeLeft(readItem);
@@ -60,5 +62,7 @@
         }
       }
     </ul>
+  } @else {
+    <app-brief-statistics></app-brief-statistics>
   }
 }

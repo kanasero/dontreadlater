@@ -1,1 +1,8 @@
-<p>brief-statistics works!</p>
+@if (statistics !== undefined) {
+  <div class="total">
+    <div class="label">Read: {{ statistics.read }} of {{ statistics.read + statistics.unread }} ({{ readPercentage }}
+      %)
+    </div>
+    <div class="read" [style]="{'--percentage': readPercentage + '%'}"></div>
+  </div>
+}
