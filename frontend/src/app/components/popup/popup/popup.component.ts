@@ -4,6 +4,7 @@ import {Subscription} from 'rxjs';
 import {SecondsToTimeStringPipe} from '../../../shared/pipes/seconds-to-time-string.pipe';
 import {SvgIconComponent} from 'angular-svg-icon';
 import {SettingsComponent} from '../../settings/settings.component';
+import {NgTemplateOutlet} from '@angular/common';
 
 @Component({
   selector: 'app-popup',
@@ -11,6 +12,7 @@ import {SettingsComponent} from '../../settings/settings.component';
     SecondsToTimeStringPipe,
     SvgIconComponent,
     SettingsComponent,
+    NgTemplateOutlet,
   ],
   templateUrl: './popup.component.html',
   standalone: true,

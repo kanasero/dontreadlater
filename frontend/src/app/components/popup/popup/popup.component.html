@@ -1,9 +1,25 @@
-@if (isSettingsVisible) {
-  <app-settings></app-settings>
-}
 @if (pageInfo !== undefined) {
+  <ng-template #actions>
+    <div class="actions">
+      <a href="https://t.me/+11qkHO82v2llYjNi" target="_blank"
+         title="Do you have any idea, suggestion? &#013;Send you message in our Telegram group!"
+         class="button telegram">
+        <svg-icon src="icons/telegram.svg"/>
+      </a>
+      <button class="btn-ico settings"
+              title="Show/hide settings"
+              (click)="isSettingsVisible = !isSettingsVisible">
+        <svg-icon src="icons/settings.svg"/>
+      </button>
+    </div>
+  </ng-template>
+
+  @if (isSettingsVisible) {
+    <app-settings></app-settings>
+  }
+
   @if (pageInfo !== null) {
-    <div class="head">
+    <div class="header">
       <div class="bookmark">
         @if (isPageInReadingList) {
           <button (click)="removeFromReadingList(pageInfo)" class="btn-remove"
@@ -18,16 +34,11 @@
             <span>Add "{{ pageInfo.title }}"</span>
           </button>
         }
-
       </div>
-      <div class="actions">
-        <button class="btn-ico"
-                title="Show/hide settings"
-                (click)="isSettingsVisible = !isSettingsVisible">
-          <svg-icon src="icons/settings.svg"/>
-        </button>
-      </div>
+      <ng-container *ngTemplateOutlet="actions"></ng-container>
     </div>
+  } @else {
+    <ng-container *ngTemplateOutlet="actions"></ng-container>
   }
   @if (readingList?.length) {
     <h2>Don't Read Later. Read Now!</h2>
