@@ -63,6 +63,13 @@
       }
     </ul>
   } @else {
+    @if (statistics !== undefined) {
+      @if (statistics.read > 0) {
+        <h2>Everything's been read. Good job!</h2>
+      } @else {
+        <h2>Nothing to read yet. Add something to the list.</h2>
+      }
+    }
     <app-brief-statistics></app-brief-statistics>
   }
 }

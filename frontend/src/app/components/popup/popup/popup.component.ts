@@ -6,6 +6,7 @@ import {SvgIconComponent} from 'angular-svg-icon';
 import {SettingsComponent} from '../../settings/settings.component';
 import {NgTemplateOutlet} from '@angular/common';
 import {BriefStatisticsComponent} from '../../statistics/brief-statistics/brief-statistics.component';
+import {Statistics, StatisticsService} from '../../../shared/services/statistics.service';
 
 @Component({
   selector: 'app-popup',
@@ -25,7 +26,9 @@ export class PopupComponent implements OnInit, OnDestroy {
   readingList: PageInfo[] | undefined
   isSettingsVisible = false
   isPageInReadingList = false
+  statistics: Statistics | undefined
   readingListService = inject(ReadingListService)
+  statisticsService = inject(StatisticsService)
 
   private subscription = new Subscription()
 
@@ -38,6 +41,8 @@ export class PopupComponent implements OnInit, OnDestroy {
       this.pageInfo = pageInfo
       this.checkIsPageInReadList();
     })
+
+    this.statisticsService.getStatisticsAsync().then(statistics => this.statistics = statistics)
 
     this.subscription.add(
       this.readingListService.readingList$.subscribe(readingList => {
