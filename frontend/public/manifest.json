@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Don't Read Later",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "Don't read later, read now! Stop bookmarking and start reading.",
   "author": "Kanasero",
   "background": {
