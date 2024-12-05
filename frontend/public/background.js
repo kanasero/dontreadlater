@@ -67,5 +67,5 @@ getSettings().then(settings => {
 
   updateOutdatedSoonCountNotification()
 
-  setTimeout(updateOutdatedSoonCountNotification, 10000);
+  setInterval(updateOutdatedSoonCountNotification, 10000);
 })
