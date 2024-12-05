@@ -142,27 +142,25 @@ export class ReadingListService {
     }).then((tabs: chrome.tabs.Tab[]) => tabs[0])
   }
 
-  private getTabTitle(tab: Tab): Promise<string | null> {
-    return new Promise(resolve => {
-      if (tab.id) {
-        chrome.scripting.executeScript({
-          target: {tabId: tab.id},
-          func: (tabTitle) => {
-            let title = document.querySelector('h1')?.innerText.trim()
-            return new Promise(resolve => resolve(title ? title : tabTitle))
-          },
-          args: [tab.title]
-        })
-          .then(([injectionResult]) => {
-            resolve(injectionResult.result as string)
-          })
-          .catch(error => {
-            resolve(null)
-          })
-      } else {
-        resolve(null)
-      }
-    })
+  private async getTabTitle(tab: Tab): Promise<string | null> {
+    if (!tab.id) {
+      return null;
+    }
+
+    try {
+      const [injectionResult] = await chrome.scripting.executeScript({
+        target: {tabId: tab.id},
+        func: (defaultTitle: string | undefined) => {
+          const titleElement = document.querySelector('h1');
+          return titleElement?.innerText.trim() || defaultTitle;
+        },
+        args: [tab.title],
+      });
+
+      return injectionResult.result as string || null;
+    } catch {
+      return null;
+    }
   }
 
   private chromeNotifyReadingListChange() {
